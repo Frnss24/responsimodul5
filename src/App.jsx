@@ -1,7 +1,8 @@
 import { NavLink, Route, Routes } from 'react-router-dom'
-import { Home, ListChecks, User, WifiOff } from 'lucide-react'
+import { Download, Home, ListChecks, User, WifiOff } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import useTasks from './hooks/useTasks'
+import useInstallPrompt from './hooks/useInstallPrompt'
 import Beranda from './pages/Beranda'
 import Tugas from './pages/Tugas'
 import Profil from './pages/Profil'
@@ -14,6 +15,7 @@ const links = [
 
 export default function App() {
   const taskState = useTasks()
+  const { canInstall, install } = useInstallPrompt()
   const [online, setOnline] = useState(navigator.onLine)
 
   useEffect(() => {
@@ -32,11 +34,21 @@ export default function App() {
       <header className="sticky top-0 z-10 border-b border-blue-100 bg-white/80 backdrop-blur">
         <div className="flex items-center justify-between px-4 py-3">
           <h1 className="text-lg font-bold text-blue-700">Tugasku</h1>
-          {!online && (
-            <span className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
-              <WifiOff size={14} /> Offline
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            {!online && (
+              <span className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
+                <WifiOff size={14} /> Offline
+              </span>
+            )}
+            {canInstall && (
+              <button
+                onClick={install}
+                className="flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
+              >
+                <Download size={14} /> Install
+              </button>
+            )}
+          </div>
         </div>
         <nav className="hidden gap-1 px-4 pb-2 sm:flex">
           {links.map(({ to, label, icon: Icon }) => (
